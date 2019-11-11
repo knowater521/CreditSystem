@@ -23,9 +23,17 @@ def login(request):
         return render(request,'index.html')  #
 #注册接口
 def register(request):
-    form = UserCreationForm()
+    if request.method=='POST':
+        form=UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            user = authenticate(username=form.cleaned_data['username'],password=form.cleaned_data['password'])
+            login(request, user)
+            return redirect('index.html')
+    else:
+        form = UserCreationForm()
     content = {'register':form}
-    return render(request, 'register.html')
+    return render(request, 'register.html',content)
 
 
 
